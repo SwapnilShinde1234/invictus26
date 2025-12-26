@@ -55,10 +55,10 @@
 
             <nav class="hidden md:flex gap-6 font-medium">
                 <a href="#home" class="text-gray-300 hover:text-white transition">Home</a>
+                <a href="#points" class="text-gray-300 hover:text-white transition"> Departments Points</a>
                 <a href="#sports" class="text-gray-300 hover:text-white transition">Sports</a>
                 <a href="#schedule" class="text-gray-300 hover:text-white transition">Schedule</a>
                 <a href="#results" class="text-gray-300 hover:text-white transition">Results</a>
-                <a href="#points" class="text-gray-300 hover:text-white transition">Points</a>
             </nav>
 
             <button id="menuBtn" class="md:hidden text-xl text-white">☰</button>
@@ -70,36 +70,53 @@
             <a class="block p-3 text-gray-300 hover:text-white" href="#sports">Sports</a>
             <a class="block p-3 text-gray-300 hover:text-white" href="#schedule">Schedule</a>
             <a class="block p-3 text-gray-300 hover:text-white" href="#results">Results</a>
-            <a class="block p-3 text-gray-300 hover:text-white" href="#points">Points</a>
+            <a class="block p-3 text-gray-300 hover:text-white" href="#points">Department Points</a>
         </div>
     </header>
 
     <div class="pt-20"></div>
 
     <!-- ================= HERO ================= -->
-    <section class="max-w-7xl mx-auto p-6 text-center">
-        <p class="text-[#A1A1AA] mb-2">All sports. One championship.</p>
-        <h2 class="text-4xl font-extrabold mb-2">
-            GCEK GENERAL
-            <span class="block text-[#F5FF00]">CHAMPIONSHIP</span>
-        </h2>
-        <p class="text-gray-400">
-            Organized by the <span class="text-white font-medium">Gymkhana Council, GCEK</span>
-        </p>
+    <section id="home"
+  class="relative max-w-7xl mx-auto p-6 text-center overflow-hidden">
 
-        <div id="heroUpdates" class="flex gap-4 overflow-x-auto no-scrollbar mt-8"></div>
-    </section>
+  <!-- Background image -->
+  <div class="absolute inset-0">
+    <img
+      src="images/Herosection.webp"
+      alt=""
+      class="w-full h-full object-cover opacity-60"
+    />
+    <!-- Dark fade overlay -->
+    <div class="absolute inset-0 bg-gradient-to-b
+                from-black/50 via-black/60 to-black/90"></div>
+  </div>
 
-    <!-- ================= HOME ================= -->
-    <section id="home" class="max-w-7xl mx-auto p-6 text-center">
-        <h2 class="text-3xl font-bold">INVICTUS'26</h2>
-        <h3 class="text-xl font-semibold text-gray-300 mt-2">
-            General Championship 2025–26
-        </h3>
-    </section>
+  <!-- Content -->
+  <div class="relative z-10">
+    <p class="text-[#A1A1AA] mb-2">All sports. One championship.</p>
+
+    <h2 class="text-4xl font-extrabold mb-2">
+      GCEK GENERAL
+      <span class="block text-[#F5FF00]">CHAMPIONSHIP</span>
+    </h2>
+
+    <p class="text-gray-400">
+      Organized by the
+      <span class="text-white font-medium">Gymkhana Council, GCEK</span>
+    </p>
+
+    <div id="heroUpdates"
+      class="flex gap-4 overflow-x-auto no-scrollbar mt-8">
+    </div>
+  </div>
+</section>
+
+
+
 
     <!-- ================= POINTS ================= -->
-    <section id="points" class="max-w-7xl mx-auto p-6">
+    <section id="points" class="max-w-6xl mx-auto p-6">
         <h3 class="text-2xl font-bold mb-2">Department Points</h3>
 
         <!-- Marquee -->
