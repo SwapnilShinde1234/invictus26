@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>General Championship</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-[#0B0B0B] text-white antialiased">
+
+    <!-- ================= HEADER ================= -->
+    <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-black/40 border-b border-white/10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+
+            <h1 class="text-xl font-bold text-white">GC Championship</h1>
+
+            <nav class="hidden md:flex gap-6 font-medium">
+                <a href="#home" class="text-gray-300 hover:text-white transition">Home</a>
+                <a href="#sports" class="text-gray-300 hover:text-white transition">Sports</a>
+                <a href="#schedule" class="text-gray-300 hover:text-white transition">Schedule</a>
+                <a href="#results" class="text-gray-300 hover:text-white transition">Results</a>
+                <a href="#points" class="text-gray-300 hover:text-white transition">Points</a>
+            </nav>
+
+            <button id="menuBtn" class="md:hidden text-xl text-white">☰</button>
+        </div>
+
+        <div id="mobilemenu" class="hidden md:hidden bg-[#0B0B0B] border-t border-white/10">
+            <a class="block p-3 text-gray-300 hover:text-white" href="#home">Home</a>
+            <a class="block p-3 text-gray-300 hover:text-white" href="#sports">Sports</a>
+            <a class="block p-3 text-gray-300 hover:text-white" href="#schedule">Schedule</a>
+            <a class="block p-3 text-gray-300 hover:text-white" href="#results">Results</a>
+            <a class="block p-3 text-gray-300 hover:text-white" href="#points">Points</a>
+        </div>
+    </header>
+
+    <div class="pt-20"></div>
+
+    <!-- ================= HERO ================= -->
+    <section class="max-w-7xl mx-auto p-6 text-center">
+        <p class="text-[#A1A1AA] mb-2">All sports. One championship.</p>
+        <h2 class="text-4xl font-extrabold mb-2">
+            GCEK GENERAL
+            <span class="block text-[#F5FF00]">CHAMPIONSHIP</span>
+        </h2>
+        <p class="text-gray-400">
+            Organized by the <span class="text-white font-medium">Gymkhana Council, GCEK</span>
+        </p>
+
+        <div id="heroUpdates" class="flex gap-4 overflow-x-auto no-scrollbar mt-8"></div>
+    </section>
+
+    <!-- ================= HOME ================= -->
+    <section id="home" class="max-w-7xl mx-auto p-6 text-center">
+        <h2 class="text-3xl font-bold">INVICTUS'26</h2>
+        <h3 class="text-xl font-semibold text-gray-300 mt-2">
+            General Championship 2025–26
+        </h3>
+    </section>
+
+    <!-- ================= POINTS ================= -->
+    <section id="points" class="max-w-7xl mx-auto p-6">
+        <h3 class="text-2xl font-bold mb-2">Department Points</h3>
+
+        <!-- Marquee -->
+        <marquee class="text-sm text-[#F5FF00] mb-4">
+            Points table updated as per latest results —
+            Last updated on <span id="pointsUpdatedAt"></span>
+        </marquee>
+
+
+
+        <div class="overflow-x-auto">
+            <table class="w-full bg-white/5 border border-white/10 backdrop-blur rounded-xl">
+                <thead class="bg-white/10">
+                    <tr>
+                        <th class="p-3 text-left">Rank</th>
+                        <th class="p-3 text-left">Department</th>
+                        <th class="p-3 text-left">Points</th>
+                    </tr>
+                </thead>
+                <tbody id="pointsTable"></tbody>
+            </table>
+        </div>
+    </section>
+
+
+    <!-- ================= SPORTS ================= -->
+    <section id="sports" class="max-w-7xl mx-auto p-6">
+
+        <h2 class="text-3xl font-bold mb-6 text-center">Sports</h2>
+
+        <!-- Search + Filter -->
+        <div class="flex flex-col md:flex-row gap-4 mb-8">
+            <input id="searchInput" type="text" placeholder="Search sport..." class="p-3 rounded-lg w-full md:w-1/2
+               bg-white/5 border border-white/10
+               text-white placeholder-[#A1A1AA]
+               focus:outline-none focus:ring-2 focus:ring-[#F5FF00]/60" />
+
+            <select id="categoryFilter" class="p-3 rounded-lg w-full md:w-1/4
+               bg-white/5 border border-white/10
+               text-white focus:outline-none focus:ring-2 focus:ring-[#F5FF00]/60">
+                <option value="ALL" class="bg-[#0B0B0B]">All Categories</option>
+                <option value="Indoor Games" class="bg-[#0B0B0B]">Indoor Games</option>
+                <option value="Outdoor Games" class="bg-[#0B0B0B]">Outdoor Games</option>
+                <option value="Indian Games" class="bg-[#0B0B0B]">Indian Games</option>
+                <option value="Gymnasium" class="bg-[#0B0B0B]">Gymnasium</option>
+            </select>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Indoor Games</h3>
+        <div id="indoorSection" class="grid md:grid-cols-3 gap-4 mb-8"></div>
+
+        <h3 class="text-xl font-semibold mb-3">Outdoor Games</h3>
+        <div id="outdoorSection" class="grid md:grid-cols-3 gap-4 mb-8"></div>
+
+        <h3 class="text-xl font-semibold mb-3">Indian Games</h3>
+        <div id="indianSection" class="grid md:grid-cols-3 gap-4 mb-8"></div>
+
+        <h3 class="text-xl font-semibold mb-3">Gymnasium</h3>
+        <div id="gymSection" class="grid md:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- ================= MATCH SCHEDULE ================= -->
+    <section id="schedule" class="max-w-7xl mx-auto p-6">
+        <h3 class="text-2xl font-bold mb-4">Match Schedule</h3>
+
+        <input id="matchSearch" type="text" placeholder="Search by sport, department, player, event..." class="w-full p-3 mb-6 rounded-lg
+             bg-white/5 border border-white/10
+             text-white placeholder-[#A1A1AA]
+             focus:outline-none focus:ring-2 focus:ring-[#F5FF00]/60" />
+
+        <div id="scheduleList" class="grid md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- ================= RESULTS ================= -->
+    <section id="results" class="max-w-7xl mx-auto p-6">
+        <h3 class="text-2xl font-bold mb-4">Results</h3>
+
+        <!-- Filters -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <select id="resultsDeptFilter" class="p-3 rounded-lg w-full md:w-1/4
+               bg-white/5 border border-white/10
+               text-white focus:outline-none focus:ring-2 focus:ring-[#F5FF00]/60">
+                <option value="ALL" class="bg-[#0B0B0B]">All Departments</option>
+                <option value="IT" class="bg-[#0B0B0B]">IT</option>
+                <option value="MECH" class="bg-[#0B0B0B]">MECH</option>
+                <option value="ELE" class="bg-[#0B0B0B]">ELE</option>
+                <option value="ENTC" class="bg-[#0B0B0B]">ENTC</option>
+                <option value="CIVIL" class="bg-[#0B0B0B]">CIVIL</option>
+            </select>
+
+            <input id="resultsSearch" type="text" placeholder="Search by sport, player, department..." class="p-3 rounded-lg w-full md:w-1/2
+               bg-white/5 border border-white/10
+               text-white placeholder-[#A1A1AA]
+               focus:outline-none focus:ring-2 focus:ring-[#F5FF00]/60" />
+        </div>
+
+        <!-- Results List -->
+        <div id="resultsList" class="grid md:grid-cols-2 gap-6"></div>
+    </section>
+
+
+    <!-- ================= IFRAME OVERLAY ================= -->
+    <div id="iframeOverlay"
+        class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+
+        <div class="bg-[#0B0B0B]/95 border border-white/10 backdrop-blur-xl
+             w-full h-full md:w-4/5 md:h-5/6
+             rounded-2xl shadow-2xl overflow-y-auto relative">
+
+            <div class="sticky top-0 bg-black/60 border-b border-white/10 p-4 flex justify-between items-center">
+                <h2 id="iframeTitle" class="text-xl font-bold"></h2>
+                <button onclick="closeIframe()" class="text-gray-400 hover:text-white transition">
+                    ✕ Close
+                </button>
+            </div>
+
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-2">Match Timetable</h3>
+                <div id="iframeSchedule" class="grid md:grid-cols-2 gap-4 mb-6"></div>
+
+                <h3 class="text-lg font-semibold mb-2">Completed Matches</h3>
+                <div id="iframeResults" class="grid md:grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-black/80 border-t border-white/10 mt-16">
+        <div class="max-w-7xl mx-auto px-6 py-8 text-center">
+      
+          <h4 class="text-lg font-bold text-white tracking-wide">
+            ANAONOMUS
+          </h4>
+      
+          <p class="text-sm text-gray-400 mt-2">
+            Powering the General Championship Experience
+          </p>
+      
+          <div class="mt-3 text-xs text-gray-500">
+            © 2025–26 Anaonomus · All Rights Reserved
+          </div>
+      
+        </div>
+      </footer>
+      
+
+    <script src="js/sportsData.js"></script>
+    <script src="js/departments.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
