@@ -1,3 +1,43 @@
+/* ================= IMAGE AUTO RESOLVER ================= */
+const IMAGE_BASE = "./images/";
+const IMAGE_EXTS = ["webp", "avif", "jpg", "jpeg", "png"];
+
+function resolveSportImage(imgEl, key) {
+    let i = 0;
+
+    function tryNext() {
+        if (i >= IMAGE_EXTS.length) {
+            // ✅ fallback image
+            imgEl.src = `${IMAGE_BASE}default.jpg`;
+            imgEl.style.opacity = "0.2";
+            return;
+        }
+        imgEl.src = `${IMAGE_BASE}${key}.${IMAGE_EXTS[i++]}`;
+    }
+
+    imgEl.onerror = tryNext;
+    tryNext();
+}
+
+
+
+function getSportImageKey(sport, events = []) {
+    const gender =
+        events.includes("Girls") ? "Girls" :
+        events.includes("Boys") ? "Boys" :
+        "";
+
+    // Normalize names to match filenames
+    const base = sport
+        .replace(/\s+/g, "")
+        .replace("-", "")
+        .replace(" of ", "Of");
+
+    return gender ? `${base}${gender}` : base;
+}
+
+
+
 /* ================= MOBILE MENU ================= */
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenu = document.getElementById("mobileMenu");
@@ -27,29 +67,44 @@ function renderSports(id, data) {
       </div>`;
         return;
     }
-
     data.forEach(s => {
         const card = document.createElement("div");
 
         card.className = `
-      group bg-white/5 border border-white/10 backdrop-blur
-      rounded-xl p-5 cursor-pointer
-      hover:border-[#F5FF00]/50 hover:bg-white/10
-      transition-all duration-300
-    `;
+          relative overflow-hidden
+          group bg-white/5 border border-white/10 backdrop-blur
+          rounded-xl p-5 cursor-pointer
+          hover:border-[#F5FF00]/50 hover:bg-white/10
+          transition-all duration-300
+        `;
 
-        card.innerHTML = `
-      <h4 class="text-lg font-semibold text-white mb-1">
-        ${s.sport}
-      </h4>
-      <p class="text-sm text-[#A1A1AA]">
-        ${s.events.join(", ")}
-      </p>
-      <span class="inline-block mt-3 text-xs text-[#F5FF00]
-                   opacity-0 group-hover:opacity-100 transition">
-        View schedule →
-      </span>
-    `;
+        const img = document.createElement("img");
+        img.className = "absolute inset-0 w-full h-full object-cover opacity-25 group-hover:opacity-40 transition";
+        img.loading = "lazy";
+        
+        const imageKey = getSportImageKey(s.sport, s.events);
+        resolveSportImage(img, imageKey);
+        
+        card.appendChild(img);
+        
+
+        const content = document.createElement("div");
+        content.className = "relative z-10";
+
+        content.innerHTML = `
+          <h4 class="text-lg font-semibold text-white mb-1">
+            ${s.sport}
+          </h4>
+          <p class="text-sm text-[#A1A1AA]">
+            ${s.events.join(", ")}
+          </p>
+          <span class="inline-block mt-3 text-xs text-[#F5FF00]
+                       opacity-0 group-hover:opacity-100 transition">
+            View schedule →
+          </span>
+        `;
+
+        card.appendChild(content);
 
         card.addEventListener("click", () => {
             openSportDetails(s.sport);
@@ -57,6 +112,7 @@ function renderSports(id, data) {
 
         el.appendChild(card);
     });
+
 }
 
 /* ================= SPORT DETAILS (IFRAME OVERLAY) ================= */
@@ -308,53 +364,53 @@ const resultsDeptFilter = document.getElementById("resultsDeptFilter");
 const resultsSearch = document.getElementById("resultsSearch");
 
 function renderResults() {
-  const list = document.getElementById("resultsList");
-  list.innerHTML = "";
+    const list = document.getElementById("resultsList");
+    list.innerHTML = "";
 
-  const dept = resultsDeptFilter.value;
-  const q = resultsSearch.value.trim().toLowerCase();
+    const dept = resultsDeptFilter.value;
+    const q = resultsSearch.value.trim().toLowerCase();
 
-  // Only completed matches
-  let completedMatches = matches.filter(m => m.status === "Completed");
+    // Only completed matches
+    let completedMatches = matches.filter(m => m.status === "Completed");
 
-  // Sort latest first
-  completedMatches.sort(
-    (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-  );
-
-  // Department filter
-  if (dept !== "ALL") {
-    completedMatches = completedMatches.filter(m =>
-      Array.isArray(m.departments) &&
-      m.departments.includes(dept)
+    // Sort latest first
+    completedMatches.sort(
+        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
     );
-  }
 
-  // Search filter
-  if (q) {
-    completedMatches = completedMatches.filter(m => {
-      return (
-        (m.sport && m.sport.toLowerCase().includes(q)) ||
-        (m.event && m.event.toLowerCase().includes(q)) ||
-        (m.winner && m.winner.toLowerCase().includes(q)) ||
-        (Array.isArray(m.participants) &&
-          m.participants.some(p => p.toLowerCase().includes(q))) ||
-        (Array.isArray(m.departments) &&
-          m.departments.some(d => d.toLowerCase().includes(q)))
-      );
-    });
-  }
+    // Department filter
+    if (dept !== "ALL") {
+        completedMatches = completedMatches.filter(m =>
+            Array.isArray(m.departments) &&
+            m.departments.includes(dept)
+        );
+    }
 
-  if (completedMatches.length === 0) {
-    list.innerHTML = `
+    // Search filter
+    if (q) {
+        completedMatches = completedMatches.filter(m => {
+            return (
+                (m.sport && m.sport.toLowerCase().includes(q)) ||
+                (m.event && m.event.toLowerCase().includes(q)) ||
+                (m.winner && m.winner.toLowerCase().includes(q)) ||
+                (Array.isArray(m.participants) &&
+                    m.participants.some(p => p.toLowerCase().includes(q))) ||
+                (Array.isArray(m.departments) &&
+                    m.departments.some(d => d.toLowerCase().includes(q)))
+            );
+        });
+    }
+
+    if (completedMatches.length === 0) {
+        list.innerHTML = `
       <div class="col-span-full text-center text-[#A1A1AA] py-8">
         No results found
       </div>`;
-    return;
-  }
+        return;
+    }
 
-  completedMatches.forEach(m => {
-    list.innerHTML += `
+    completedMatches.forEach(m => {
+        list.innerHTML += `
       <div class="bg-white/5 border border-white/10 backdrop-blur
                   rounded-xl p-5">
 
@@ -371,11 +427,10 @@ function renderResults() {
 
         <p class="mt-2 font-semibold text-[#F5FF00]">
           Winner: ${m.winner}
-          ${
-            m.winnerDepartment
-              ? `<span class="text-sm text-[#A1A1AA]">(${m.winnerDepartment})</span>`
-              : ""
-          }
+          ${m.winnerDepartment
+                ? `<span class="text-sm text-[#A1A1AA]">(${m.winnerDepartment})</span>`
+                : ""
+            }
         </p>
 
         <p class="text-xs text-[#A1A1AA] mt-2">
@@ -383,7 +438,7 @@ function renderResults() {
         </p>
       </div>
     `;
-  });
+    });
 }
 
 // Event listeners
