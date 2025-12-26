@@ -1,3 +1,11 @@
+
+const startTime = Date.now();
+
+window.addEventListener("load", () => {
+    const total = Date.now() - startTime;
+    document.getElementById("loader").remove();
+});
+
 /* ================= IMAGE AUTO RESOLVER ================= */
 const IMAGE_BASE = "./images/";
 const IMAGE_EXTS = ["webp", "avif", "jpg", "jpeg", "png"];
