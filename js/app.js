@@ -1,3 +1,29 @@
+import { matches } from "./index.js";
+import {
+    indoorGames,
+    outdoorGames,
+    indianGames,
+    gymnasiumGames,
+    allSports
+} from "./sportsData.js";
+import { departmentPoints, departmentMeta } from "./departments.js";
+import { renderIframeResults } from "./results.js";
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    renderSports("indoorSection", indoorGames);
+    renderSports("outdoorSection", outdoorGames);
+    renderSports("indianSection", indianGames);
+    renderSports("gymSection", gymnasiumGames);
+
+});
+
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+const heroUpdates = document.getElementById("heroUpdates");
+const pointsTable = document.getElementById("pointsTable");
+
 
 const startTime = Date.now();
 
@@ -10,21 +36,57 @@ window.addEventListener("load", () => {
 const IMAGE_BASE = "./images/";
 const IMAGE_EXTS = ["webp", "avif", "jpg", "jpeg", "png"];
 
-function resolveSportImage(imgEl, key) {
+function resolveSportImage(imgEl, sport, event) {
     let i = 0;
-
+  
+    const clean = str => str.replace(/\s+/g, "");
+  
+    const genderKey = `${clean(sport)}${clean(event)}`; // CricketBoys
+    const baseKey = clean(sport);                        // Cricket
+  
     function tryNext() {
-        if (i >= IMAGE_EXTS.length) {
-            // ✅ fallback image
-            imgEl.src = `${IMAGE_BASE}default.jpg`;
-            imgEl.style.opacity = "0.2";
-            return;
-        }
-        imgEl.src = `${IMAGE_BASE}${key}.${IMAGE_EXTS[i++]}`;
+      if (i >= IMAGE_EXTS.length * 2) {
+        imgEl.src = `${IMAGE_BASE}default.jpg`;
+        imgEl.style.opacity = "0.2";
+        return;
+      }
+  
+      const ext = IMAGE_EXTS[i % IMAGE_EXTS.length];
+  
+      // First try: CricketBoys.webp
+      // Second round: Cricket.webp
+      imgEl.src =
+        i < IMAGE_EXTS.length
+          ? `${IMAGE_BASE}${genderKey}.${ext}`
+          : `${IMAGE_BASE}${baseKey}.${ext}`;
+  
+      i++;
     }
-
+  
     imgEl.onerror = tryNext;
     tryNext();
+  }
+  
+function setupIframeTabs() {
+    const tabs = document.querySelectorAll(".iframe-tab");
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            // reset all tabs
+            tabs.forEach(t => t.dataset.active = "false");
+
+            // hide all panels
+            ["schedule", "completed", "results"].forEach(id => {
+                document.getElementById(`tab-${id}`).classList.add("hidden");
+            });
+
+            // activate selected
+            tab.dataset.active = "true";
+            document
+                .getElementById(`tab-${tab.dataset.tab}`)
+                .classList.remove("hidden");
+        });
+    });
 }
 
 
@@ -32,8 +94,8 @@ function resolveSportImage(imgEl, key) {
 function getSportImageKey(sport, events = []) {
     const gender =
         events.includes("Girls") ? "Girls" :
-        events.includes("Boys") ? "Boys" :
-        "";
+            events.includes("Boys") ? "Boys" :
+                "";
 
     // Normalize names to match filenames
     const base = sport
@@ -89,12 +151,13 @@ function renderSports(id, data) {
         const img = document.createElement("img");
         img.className = "absolute inset-0 w-full h-full object-cover opacity-25 group-hover:opacity-40 transition";
         img.loading = "lazy";
-        
-        const imageKey = getSportImageKey(s.sport, s.events);
-        resolveSportImage(img, imageKey);
-        
+
+      
+        resolveSportImage(img, s.sport, s.event);
+
+
         card.appendChild(img);
-        
+
 
         const content = document.createElement("div");
         content.className = "relative z-10";
@@ -104,7 +167,7 @@ function renderSports(id, data) {
             ${s.sport}
           </h4>
           <p class="text-sm text-[#A1A1AA]">
-            ${s.events.join(", ")}
+          ${s.event}
           </p>
           <span class="inline-block mt-3 text-xs text-[#F5FF00]
                        opacity-0 group-hover:opacity-100 transition">
@@ -115,7 +178,7 @@ function renderSports(id, data) {
         card.appendChild(content);
 
         card.addEventListener("click", () => {
-            openSportDetails(s.sport);
+            openSportDetails(s.sport, s.event);
         });
 
         el.appendChild(card);
@@ -123,71 +186,81 @@ function renderSports(id, data) {
 
 }
 
+function renderParticipants(participants) {
+    if (!Array.isArray(participants) || participants.length === 0) return "";
+
+    return `
+      <ol class="list-decimal list-inside text-sm text-[#A1A1AA] space-y-1 mt-1">
+        ${participants.map(p => `<li>${p}</li>`).join("")}
+      </ol>
+    `;
+}
+
 /* ================= SPORT DETAILS (IFRAME OVERLAY) ================= */
-function openSportDetails(sportName) {
+function openSportDetails(sportName,sportEvent) {
     const overlay = document.getElementById("iframeOverlay");
     const title = document.getElementById("iframeTitle");
-    const scheduleDiv = document.getElementById("iframeSchedule");
-    const resultsDiv = document.getElementById("iframeResults");
 
-    if (!overlay || !title || !scheduleDiv || !resultsDiv) return;
+    const scheduleDiv = document.getElementById("iframeSchedule");
+    const completedDiv = document.getElementById("iframeCompleted");
 
     overlay.classList.remove("hidden");
     title.innerText = sportName;
 
     scheduleDiv.innerHTML = "";
-    resultsDiv.innerHTML = "";
+    completedDiv.innerHTML = "";
 
-    const sportMatches = matches.filter(m => m.sport === sportName);
+    const sportMatches = matches.filter(m => m.sport === sportName , e => e.sport ===eventName );
 
     if (sportMatches.length === 0) {
         scheduleDiv.innerHTML = `
-      <div class="text-center text-[#A1A1AA]">No matches scheduled</div>`;
-        resultsDiv.innerHTML = `
-      <div class="text-center text-[#A1A1AA]">No completed matches</div>`;
+        <div class="text-center text-gray-400">
+          No matches scheduled
+        </div>`;
         return;
     }
 
-    let hasUpcoming = false;
-    let hasCompleted = false;
-
     sportMatches.forEach(m => {
         const card = `
-      <div class="bg-white/5 border border-white/10 backdrop-blur
-                  rounded-xl p-4">
-        <p class="font-semibold text-white">${m.event || ""}</p>
-        <p class="text-sm text-[#A1A1AA]">${m.participants.join(" vs ")}</p>
-        <p class="text-xs text-[#A1A1AA] mt-1">${m.date} • ${m.time}</p>
-        ${m.status === "Completed"
-                ? `<p class="text-[#F5FF00] font-semibold mt-2">${m.result}</p>`
-                : `<p class="text-blue-400 font-semibold mt-2">Upcoming</p>`
-            }
-      </div>
-    `;
+        <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+          <div class="flex justify-between items-center mb-1">
+            <p class="font-semibold text-white">${m.event}</p>
+            <span class="text-xs px-2 py-1 rounded
+              ${m.status === "Completed"
+                ? "bg-[#F5FF00] text-black"
+                : "bg-blue-500/20 text-blue-400"}">
+              ${m.status}
+            </span>
+          </div>
+  
+          <ol class="list-decimal list-inside text-sm text-gray-400 mt-1">
+            ${m.participants.map(p => `<li>${p}</li>`).join("")}
+          </ol>
+  
+          <p class="text-xs text-gray-400 mt-2">
+            ${m.date} • ${m.time}
+          </p>
+        </div>
+      `;
 
+        // ✅ ALWAYS show in timetable
+        scheduleDiv.innerHTML += card;
+
+        // ✅ Only completed here
         if (m.status === "Completed") {
-            hasCompleted = true;
-            resultsDiv.innerHTML += card;
-        } else {
-            hasUpcoming = true;
-            scheduleDiv.innerHTML += card;
+            completedDiv.innerHTML += card;
         }
     });
 
-    if (!hasUpcoming) {
-        scheduleDiv.innerHTML =
-            `<div class="text-center text-[#A1A1AA]">No upcoming matches</div>`;
-    }
-
-    if (!hasCompleted) {
-        resultsDiv.innerHTML =
-            `<div class="text-center text-[#A1A1AA]">No completed matches yet</div>`;
-    }
+    setupIframeTabs();
+    renderIframeResults(sportName);
 }
 
-function closeIframe() {
+
+window.closeIframe = function () {
     document.getElementById("iframeOverlay").classList.add("hidden");
-}
+  };
+  
 
 /* ================= INITIAL SPORTS RENDER ================= */
 renderSports("indoorSection", indoorGames);
@@ -434,7 +507,7 @@ function renderResults() {
         </p>
 
         <p class="mt-2 font-semibold text-[#F5FF00]">
-          Winner: ${m.winner}
+          Winner: ${m.result}
           ${m.winnerDepartment
                 ? `<span class="text-sm text-[#A1A1AA]">(${m.winnerDepartment})</span>`
                 : ""
@@ -448,6 +521,7 @@ function renderResults() {
     `;
     });
 }
+
 
 // Event listeners
 resultsDeptFilter.addEventListener("change", renderResults);

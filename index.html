@@ -7,6 +7,7 @@
     <title>General Championship</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script>
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
@@ -221,14 +222,56 @@
                     ✕ Close
                 </button>
             </div>
-
             <div class="p-6">
-                <h3 class="text-lg font-semibold mb-2">Match Timetable</h3>
-                <div id="iframeSchedule" class="grid md:grid-cols-2 gap-4 mb-6"></div>
 
-                <h3 class="text-lg font-semibold mb-2">Completed Matches</h3>
-                <div id="iframeResults" class="grid md:grid-cols-2 gap-4"></div>
-            </div>
+                <!-- Tabs -->
+                <div class="flex gap-6 border-b border-white/10 mb-6">
+                  <button
+                    class="iframe-tab text-gray-400 font-medium pb-2 border-b-2 border-transparent
+                           data-[active=true]:text-[#F5FF00]
+                           data-[active=true]:border-[#F5FF00]"
+                    data-tab="schedule"
+                    data-active="true">
+                    Timetable
+                  </button>
+              
+                  <button
+                    class="iframe-tab text-gray-400 font-medium pb-2 border-b-2 border-transparent
+                           data-[active=true]:text-[#F5FF00]
+                           data-[active=true]:border-[#F5FF00]"
+                    data-tab="completed"
+                    data-active="false">
+                    Completed
+                  </button>
+              
+                  <button
+                    class="iframe-tab text-gray-400 font-medium pb-2 border-b-2 border-transparent
+                           data-[active=true]:text-[#F5FF00]
+                           data-[active=true]:border-[#F5FF00]"
+                    data-tab="results"
+                    data-active="false">
+                    🏆 Results
+                  </button>
+                </div>
+              
+                <!-- Timetable -->
+                <div id="tab-schedule">
+                  <div id="iframeSchedule" class="grid md:grid-cols-2 gap-4"></div>
+                </div>
+              
+                <!-- Completed -->
+                <div id="tab-completed" class="hidden">
+                  <div id="iframeCompleted" class="grid md:grid-cols-2 gap-4"></div>
+                </div>
+              
+                <!-- Results -->
+                <div id="tab-results" class="hidden">
+                  <div id="iframeResults" class="grid md:grid-cols-2 gap-6"></div>
+                </div>
+              
+              </div>
+              
+              
         </div>
     </div>
 
@@ -252,9 +295,9 @@
     </footer>
 
 
-    <script src="js/sportsData.js"></script>
-    <script src="js/departments.js"></script>
-    <script src="js/app.js"></script>
+
+    <script type="module" src="js/app.js"></script>
+
 
 </body>
 
