@@ -1,7 +1,9 @@
 /* ================= INDOOR GAMES ================= */
 export const indoorGames = [
     { sport: "Carrom", type: "INDIVIDUAL", category: "Indoor Games", event: "Singles" },
+    { sport: "Carrom", type: "INDIVIDUAL", category: "Indoor Games", event: "Singles (Girls)" },
     { sport: "Carrom", type: "INDIVIDUAL", category: "Indoor Games", event: "Doubles" },
+    { sport: "Carrom", type: "INDIVIDUAL", category: "Indoor Games", event: "Doubles (Girls)" },
   
     { sport: "Badminton", type: "INDIVIDUAL", category: "Indoor Games", event: "Singles" },
     { sport: "Badminton", type: "INDIVIDUAL", category: "Indoor Games", event: "Doubles" },
